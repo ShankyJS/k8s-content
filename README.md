@@ -135,3 +135,93 @@ EOF
 Now we can do ```kubectl get pods``` to see our running pod (on our default namespace).
 
 And we can describe our pod with ```kubectl describe pod nginx``` or even delete it with ```kubectl delete pod nginx ```
+
+# Custering and Nodes
+
+Kubernetes implements a clustered architecture. In a typical production environment, you will have multiple servers that are able to run your workloads (containers).
+
+These servers which actually run the containers are called nodes or workers.
+
+A Kubernetes cluster has one or more control servers which manage and control the cluster and host by the Kubernetes API. 
+
+These control servers are usually separate from worker nodes, which run applications within the cluster.
+
+````
+kubectl get nodes
+kubectl describe "node_name"
+````
+<img src="https://i.imgur.com/nwphQOS.png"/>
+
+# Networking on K8s 
+ 
+When using K8s it's important to know how networking works, in this course I used the K8s flannel plugin to create my VCN on my cluster.
+The kubernetes networking model involve create a VN across the cluster, so every pod has a unique IP address and can communicate with any other pod in the cluster.  that's why my pods can communicate each other without be on the same node. 
+
+<img src="https://i.imgur.com/0daZJAu.png" />
+
+````
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.15.4
+        ports:
+        - containerPort: 80
+````
+
+````
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+spec:
+  containers:
+  - name: busybox
+    image: radial/busyboxplus:curl
+    args:
+    - sleep
+    - "1000"
+````
+
+## Kubernetes Architecture and Components.
+
+Kubernetes includes multiple components that work together to provide the funcionability of a K8s cluster.
+
+The control plane components manage and control the cluster: 
+
+- etcd: Provides distributed synchronized data sotrage for the cluster state.
+
+- kube-apiserver: Serves the K8s API, the primary interface for the cluster.
+
+- Kube-controller-manager: Bundles several components into one package.
+
+- Kube-scheduler: Schedules pods to run on individual nodes.
+
+In additionn to the control plane, each node also has:
+
+***kubelet:*** Agent that executes containers on each node.
+***Kube-proxy:*** Handles network communcation between nodes by adding firewall routing rules.
+
+With kubeadm, many of these components are run as pods within the cluster itself.
+
+
+````
+kubectl get pods -n kube-system
+````
+
+
+
