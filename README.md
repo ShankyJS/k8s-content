@@ -223,5 +223,8 @@ With kubeadm, many of these components are run as pods within the cluster itself
 kubectl get pods -n kube-system
 ````
 
+Kubelet is not a pod, is a service running on systemd.
+
+
 
 
