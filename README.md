@@ -225,6 +225,98 @@ kubectl get pods -n kube-system
 
 Kubelet is not a pod, is a service running on systemd.
 
+## Deployments: 
+
+Pods are great way to organize and manage containers, but what if I want to spin up and automate multiple pods?
+
+***Deployments:*** Are great way to automate the management of your pods. A deployment allows you to specify a desired state for a set of pods. The cluster will then constantly work to maintain that desired state.
+
+***Scaling:*** With a deployment, you can specify the number of replicas you want, and the deployment will create (or remove) pods to meet that number of replicas.
+
+***Rolling updates:*** With a deployment you can change the deployment container version to a new version of the image but the deployment will gradually replace existing containers with the new version.
+
+***Self healing***: If one of the pods in the deployment is accidentally destroyed, the deployment will inmediately spin up a new one to replace it.
 
 
+## Services in Kubernetes 
 
+Services are another important component of deploying apps with K8s. 
+
+Services allow you to dynamically access a group of replica pods. Replica pods are often being created and destroyed, so what happens to other pods or external entities which need to access those pods?
+
+A Service creates an ***abstraction layer*** on top of a set of replica pods. You can access the service rather than accessing the pods directly, so as pods come and go, you get uninterrupted, dynamic access to whatever replicas are up at the time.
+
+
+Cluster:
+
+POD <---------------Service 
+POD <----------^
+POD <-------^
+
+````
+kind: Service
+apiVersion: v1
+metadata:
+  name: nginx-service
+spec:
+  selector:
+    app: nginx
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+    nodePort: 30080
+  type: NodePort
+````
+list services.
+````
+kubectl get svc
+````
+
+# Deploy a simple Microservices Application on K8s
+
+````
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: store-products
+  labels:
+    app: store-products
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: store-products
+  template:
+    metadata:
+      labels:
+        app: store-products
+    spec:
+      containers:
+      - name: store-products
+        image: linuxacademycontent/store-products:1.0.0
+        ports:
+        - containerPort: 80
+````
+
+Service
+
+````
+kind: Service
+apiVersion: v1
+metadata:
+  name: store-products
+spec:
+  selector:
+    app: store-products
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+````
+
+Executing from busybox pod
+
+````
+kubectl exec busybox -- curl -s store-products
+````
