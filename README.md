@@ -320,3 +320,71 @@ Executing from busybox pod
 ````
 kubectl exec busybox -- curl -s store-products
 ````
+
+## What are Microservices?
+
+Microservices are one of those areas where the benefits and features of Kubernetes really shines. Managing microservices applications is not the only use case for Kubernetes, but it's definitely a very powerful use case. So in this lesson, we're going to talk about what our microservices.
+
+Microservices is application architecture, Many applications are designed with a monolithic architecture, meaning that all parts of the application are combined in one large executable.
+
+Monolith Application:
+------------------------|
+| Auth    Customer Data |
+| Product Search        |
+| ----------------------|
+
+
+Microservice Application
+
+Microservice architectures break the application up into several small services, can be made on completely different technologies, languages, can be scalated separately.
+
+|-------------------------|
+| Auth |
+|-------------------------|
+|      | Customer| Product|
+|      | Data    | Product|
+--------------------------|
+
+Here are few advantages of microservices:
+
+Scalability: Individual microservices are independiently scalable. If your search service is under a large amount of load, you can scale that service by itself, without scaling the whole application.
+
+Cleaner code: When services are relatively independent, it is easier to make a change in one area of the application without breaking things in other areas.
+
+Reliability: Problems in one area of the application are less likely to affect other areas.
+
+Variety of Tools: Different parts of the application can be built using different tools, languages, and frameworks. THis means that the right tool can be used for every job.
+
+Implementing microservices means deploying, scaling and managing a lot of individual components, ***Kubernetes*** is a great tool for accomplishing all of this. In the world of microservices, the benefits of Kubernetes really shine.
+
+## Deploying the Robot Shop App
+
+Kubernetes is a powerful tool for managing and deploying microservice applications. In this lesson, we will deploy a microservice application consisting of a multiple varied components to our cluster. We will also explore the application briefly in order to get a hand on gimpse of what a microservice application might look like, and how it might run in a K8s cluster.
+
+
+***Clone the Git Repository.***
+
+````
+cd ~/
+git clone https://github.com/linuxacademy/robot-shop.git
+````
+
+*** Create a namespace and deploy the application objects to the namespace using the deployment descriptors from the Git Repository.***
+
+````
+kubectl create namespace robot-shop
+kubectl -n robot-shop create -f ~/robot-shop/K8s/descriptors/
+````
+
+***Get a list of the application's pods and wait for all of them to finish starting up:***
+
+````
+kubectl get pods -n robot-shop -w
+````
+
+Once all the pods are up, you can access the application in a browser using the public IP of a one of your Kubernetes servers and port 30080:
+
+````
+http://$kube_server_public_ip:30080
+````
+
