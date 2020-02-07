@@ -388,3 +388,9 @@ Once all the pods are up, you can access the application in a browser using the 
 http://$kube_server_public_ip:30080
 ````
 
+Edit a deployment added:
+
+````
+kubectl edit deployment <name> -n <namespace>
+
+````
